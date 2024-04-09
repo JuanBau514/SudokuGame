@@ -10,73 +10,70 @@ import android.view.MotionEvent
 import android.view.View
 
 /**
- * Custom view for displaying the Sudoku board.
- *
- * @param context The context of the view.
- * @param attributeSet The attribute set of the view.
+ * Aqui usuamos el View para crear un tablero de sudoku, con las lineas y celdas correspondientes.
+ * Ademas, se definen los colores y estilos de las celdas, lineas y numeros.
+ * Se implementa la interfaz OnTouchListener para manejar los eventos de toque en el tablero.
  */
 class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
 
-    private var boardSize = 9
-    private var sqrtSize = 3
-    private var cellSizePixels = 0
-    private var selectedRow = -1
-    private var selectedColumn = -1
-    private var boardNumbers = ArrayList<Pair<Int, Int>?>()
-    internal var onTouchListener: OnTouchListener? = null
+    private var boardSize = 9 // Tamaño del tablero
+    private var sqrtSize = 3 // Tamaño de la raiz cuadrada del tablero
+    private var cellSizePixels = 0 // Tamaño de las celdas del tablero
+    private var selectedRow = -1 // Fila seleccionada
+    private var selectedColumn = -1 // Columna seleccionada
+    private var boardNumbers = ArrayList<Pair<Int, Int>?>() // Lista de numeros en el tablero
+    internal var onTouchListener: OnTouchListener? = null // Listener para los eventos de toque en el tablero
 
-    private val thickLinePaint = Paint().apply {
+    private val thickLinePaint = Paint().apply { // Paint para las lineas gruesas del tablero
         style = Paint.Style.STROKE
         color = Color.BLACK
         strokeWidth = 4F
     }
 
-    private val thinLinePaint = Paint().apply {
+    private val thinLinePaint = Paint().apply { // Paint para las lineas delgadas del tablero
         style = Paint.Style.STROKE
         color = Color.BLACK
         strokeWidth = 2F
     }
 
-    private val selectedCellPaint = Paint().apply {
+    private val selectedCellPaint = Paint().apply { // Paint para la celda seleccionada en el tablero
         style = Paint.Style.FILL_AND_STROKE
         color = Color.rgb(173, 216, 230)
     }
 
-    private val conflictingCellPaint = Paint().apply {
+    private val conflictingCellPaint = Paint().apply { // Paint para las celdas conflictivas en el tablero
+        // conflictivas son las que tienen el mismo numero en la misma fila, columna o cuadrante, ademas de la seleccionada
         style = Paint.Style.FILL_AND_STROKE
         color = Color.LTGRAY
     }
 
-    private val textPaint = Paint().apply {
+    private val textPaint = Paint().apply {// Paint para los numeros en las celdas del tablero
         color = Color.BLACK
         textSize = 35f
     }
 
-    private val preDefinedCellPaint = Paint().apply {
+    private val preDefinedCellPaint = Paint().apply { // Paint para las celdas predefinidas en el tablero
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.rgb(235, 235, 235)
+        color = Color.rgb(225, 20, 65)
     }
 
-    private val checkedCellPaint = Paint().apply {
+    private val checkedCellPaint = Paint().apply { // Paint para las celdas verificadas en el tablero
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.rgb(231, 255, 232)
+        color = Color.rgb(255, 255, 204)
     }
 
-    private val correctCellPaint = Paint().apply {
+    private val correctCellPaint = Paint().apply { // Paint para las celdas correctas en el tablero
         style = Paint.Style.FILL_AND_STROKE
         color = Color.GREEN
     }
 
-    private val wrongCellPaint = Paint().apply {
+    private val wrongCellPaint = Paint().apply {// verifica si la celda es incorrecta
         style = Paint.Style.FILL_AND_STROKE
         color = Color.RED
     }
 
     /**
-     * Measures the view and determines its size.
-     *
-     * @param widthMeasureSpec The width measure specification.
-     * @param heightMeasureSpec The height measure specification.
+     * mide el tamaño de la celda y lo ajusta al tamaño del tablero
      */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -85,9 +82,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     /**
-     * Draws the Sudoku board on the canvas.
-     *
-     * @param canvas The canvas on which to draw.
+     * Dibuja el tablero en todo el canvas o el lienzo.
      */
     override fun onDraw(canvas: Canvas) {
         cellSizePixels = (width / boardSize)
@@ -96,10 +91,10 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     private fun fillCells(canvas: Canvas) {
-        if (selectedRow == -1 || selectedColumn == -1) return
-
+        if (selectedRow == -1 || selectedColumn == -1) return // valida si la celda seleccionada es valida
+    // si es valida recorre las celdas del tablero y las pinta segun su estado
         for (row in 0 until boardSize) {
-            for (column in 0 until boardSize) {
+            for (column in 0 until boardSize) { // recorre las columnas y filas del tablero y verifica si hay conflictos
                 var conflict = false
                 if (row == selectedRow && column == selectedColumn) {
                     fillCell(canvas, row, column, selectedCellPaint)
@@ -109,7 +104,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                     conflict = true
                 }
 
-                if (boardNumbers[row * boardSize + column] != null) {
+                if (boardNumbers[row * boardSize + column] != null) { // si no hay conflictos pinta la celda segun su estado
                     val text = boardNumbers[row * boardSize + column]!!.first.toString()
                     val textX = column * cellSizePixels + (cellSizePixels - textPaint.measureText(text)) / 2
                     val textY = row * cellSizePixels + (cellSizePixels + textPaint.textSize) / 2
@@ -122,18 +117,19 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                         }
                     }
 
-                    canvas.drawText(text, textX, textY, textPaint)
+                    canvas.drawText(text, textX, textY, textPaint) // pinta el numero en la celda
                 }
             }
         }
     }
 
+    // determina el color de la celda segun su estado
     private fun fillCell(canvas: Canvas, row: Int, column: Int, paint: Paint) {
         val rect = Rect(column * cellSizePixels, row * cellSizePixels, (column + 1) * cellSizePixels, (row + 1) * cellSizePixels)
         canvas.drawRect(rect, paint)
     }
 
-    private fun drawLines(canvas: Canvas) {
+    private fun drawLines(canvas: Canvas) { // dibuja las lineas del tablero
         canvas.drawRect(0F, 0F, width.toFloat(), height.toFloat(), thickLinePaint)
 
         for (i in 1 until boardSize) {
@@ -161,10 +157,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     /**
-     * Handles touch events on the view.
-     *
-     * @param event The motion event.
-     * @return True if the event is handled, false otherwise.
+     * Manejador de eventos de toque en el tablero.
      */
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -184,10 +177,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     /**
-     * Updates the selected cell on the board.
-     *
-     * @param row The row of the selected cell.
-     * @param column The column of the selected cell.
+     * Actualiza la celda seleccionada en el tablero.
      */
     fun updateSelectedCell(row: Int, column: Int) {
         selectedRow = row
@@ -196,9 +186,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     /**
-     * Updates the numbers on the Sudoku board.
-     *
-     * @param boardNumbers The list of numbers on the board.
+     * Actualiza los numeros en el tablero segun lo seleccionado en el teclado.
      */
     fun updateBoardNumbers(boardNumbers: List<Pair<Int, Int>?>) {
         this.boardNumbers = boardNumbers as ArrayList<Pair<Int, Int>?>
@@ -208,14 +196,15 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     /**
-     * Interface for handling touch events on the Sudoku board.
+     * Para manjejar los eventos de toque en el tablero.
+     * se tuvo que usar una interfaz para poder implementar el metodo onTouch en el tablero.
+     * se implementa el metodo onTouch de la interfaz OnTouchListener.
+     *
      */
     interface OnTouchListener {
         /**
-         * Called when a cell on the board is touched.
-         *
-         * @param row The row of the touched cell.
-         * @param column The column of the touched cell.
+         * Cada vez que se toca una celda en el tablero se llama a este metodo.
+         *  por medio de la interfaz se implementa el metodo onTouch.
          */
         fun onTouch(row: Int, column: Int)
     }
