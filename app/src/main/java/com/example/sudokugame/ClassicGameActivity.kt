@@ -1,6 +1,7 @@
 package com.example.sudokugame
 
 import android.content.Intent
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -10,12 +11,15 @@ import androidx.lifecycle.ViewModelProvider
 
 class ClassicGameActivity : AppCompatActivity() {
 
+    private lateinit var mediaPlayer: MediaPlayer
     private lateinit var viewModel: SudokuViewModel
     private var mode = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_classic_game)
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.ding)
 
         // una vez cambiamos de actividad, configuramos la vista del tablero y la mostramos en el activity-classic-game.xml
         val boardView = findViewById<SudokuBoardView>(R.id.sudokuBoardView)
@@ -48,7 +52,9 @@ class ClassicGameActivity : AppCompatActivity() {
             findViewById<Button>(R.id.nineButton)
         )
         buttonList.forEachIndexed { index, button ->
-            button.setOnClickListener { viewModel.numberInput(index + 1) } // le sumamos 1 porque los indices empiezan en 0
+            button.setOnClickListener { viewModel.numberInput(index + 1)
+                mediaPlayer.seekTo(100)
+                mediaPlayer.start()} // le sumamos 1 porque los indices empiezan en 0
         }
 
         // aceptar button
