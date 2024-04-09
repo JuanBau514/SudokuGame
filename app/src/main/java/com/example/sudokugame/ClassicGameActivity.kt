@@ -8,9 +8,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 
-/**
- * Activity for playing the classic Sudoku game.
- */
 class ClassicGameActivity : AppCompatActivity() {
 
     private lateinit var viewModel: SudokuViewModel
@@ -20,7 +17,7 @@ class ClassicGameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_classic_game)
 
-        // Set up Sudoku board view
+        // una vez cambiamos de actividad, configuramos la vista del tablero y la mostramos en el activity-classic-game.xml
         val boardView = findViewById<SudokuBoardView>(R.id.sudokuBoardView)
         boardView.onTouchListener = object : SudokuBoardView.OnTouchListener {
             override fun onTouch(row: Int, column: Int) {
@@ -28,17 +25,17 @@ class ClassicGameActivity : AppCompatActivity() {
             }
         }
 
-        // Get game mode from intent extras
+        // Usando el intent, obtenemos el modo de dificultad del juego como un int
         mode = intent.getIntExtra("mode", 1)
 
-        // Set up ViewModel
+        // ViewModel
         val viewModelFactory = ViewModelFactory(mode)
         viewModel = ViewModelProvider(this, viewModelFactory)[SudokuViewModel::class.java]
         viewModel.selectedCell.observe(this) { updateSelectedCell(it) }
         viewModel.boardNumbers.observe(this) { updateBoardNumbers(it) }
         viewModel.seconds.observe(this) { updateTime(it) }
 
-        // Set up number buttons
+        // Teckado de numeros del 1 al 9
         val buttonList = listOf(
             findViewById(R.id.oneButton),
             findViewById(R.id.twoButton),
@@ -51,18 +48,18 @@ class ClassicGameActivity : AppCompatActivity() {
             findViewById<Button>(R.id.nineButton)
         )
         buttonList.forEachIndexed { index, button ->
-            button.setOnClickListener { viewModel.numberInput(index + 1) }
+            button.setOnClickListener { viewModel.numberInput(index + 1) } // le sumamos 1 porque los indices empiezan en 0
         }
 
-        // Set up accept button
+        // aceptar button
         val acceptButton = findViewById<Button>(R.id.acceptButton)
         acceptButton.setOnClickListener { viewModel.acceptNumber() }
 
-        // Set up remove button
+        // eliminar button
         val removeButton = findViewById<Button>(R.id.backButton)
         removeButton.setOnClickListener { viewModel.removeNumber() }
 
-        // Set up finish button
+        // Terminar button
         val finishButton = findViewById<Button>(R.id.finishButton)
         finishButton.setOnClickListener {
             if (viewModel.finish()) end()
@@ -70,19 +67,18 @@ class ClassicGameActivity : AppCompatActivity() {
     }
 
     /**
-     * Updates the selected cell on the Sudoku board view.
-     *
-     * @param cell The coordinates of the selected cell as a pair of (row, column).
+     * Actualiza la celda seleccionada en el tablero del Sudoku.
+     * Cuando se toca una celda, se actualiza la celda seleccionada en el tablero
+     * y se muestra en la vista usando coordenadas de fila y columna.
      */
-    private fun updateSelectedCell(cell: Pair<Int, Int>?) = cell?.let {
-        val boardView = findViewById<SudokuBoardView>(R.id.sudokuBoardView)
-        boardView.updateSelectedCell(cell.first, cell.second)
+    private fun updateSelectedCell(cell: Pair<Int, Int>?) = cell?.let { // cell para la celda seleccionada y recibe un par de enteros fila o columna
+        val boardView = findViewById<SudokuBoardView>(R.id.sudokuBoardView) // obtenemos la vista del tablero
+        boardView.updateSelectedCell(cell.first, cell.second) // actualizamos la celda seleccionada en la vista del tablero
     }
 
     /**
-     * Updates the numbers displayed on the Sudoku board view.
-     *
-     * @param boardNumbers The list of numbers to be displayed on the board as pairs of (row, column) coordinates.
+     * Actualiza los números en el tablero del Sudoku.
+     *  dibuja los numeros en el tablero del sudoku y la actualiza segun la celda seleccionada.
      */
     private fun updateBoardNumbers(boardNumbers: List<Pair<Int, Int>?>) {
         val boardView = findViewById<SudokuBoardView>(R.id.sudokuBoardView)
@@ -90,53 +86,48 @@ class ClassicGameActivity : AppCompatActivity() {
     }
 
     /**
-     * Updates the time display on the activity.
-     *
-     * @param seconds The number of seconds elapsed in the game.
+     * Esta funcion actualiza el tiempo en la vista del tablero.
+     * muestra el tiempo en el formato MM:SS
      */
     private fun updateTime(seconds: Int) {
         var text = viewModel.minutes.value.toString() + ":"
-        if (viewModel.minutes.value!! < 10) {
+        if (viewModel.minutes.value!! < 10) { // si los minutos son menores a 10, se agrega un 0 al inicio
             text = "0$text"
         }
-        if (seconds < 10) {
+        if (seconds < 10) { // si los segundos son menores a 10, se agrega un 0 al inicio
             text += "0$seconds"
         } else {
             text += seconds
         }
-        val timeTextView = findViewById<TextView>(R.id.time)
-        timeTextView.text = text
+        val timeTextView = findViewById<TextView>(R.id.time) // obtenemos el textview del tiempo
+        timeTextView.text = text // actualizamos el tiempo en la vista
     }
 
     /**
-     * Callback when a cell on the Sudoku board is touched.
-     *
-     * @param row The row index of the touched cell.
-     * @param column The column index of the touched cell.
+     * Aqui se maneja el evento de tocar una celda en el tablero.
+     * nuevamente cuando se toca la celda se actualiza la celda seleccionada en el tablero
+     * y se muestra en la vista usando coordenadas de fila y columna.
      */
     fun onCellTouched(row: Int, column: Int) {
         viewModel.updateSelectedCell(row, column)
     }
 
     /**
-     * Ends the game and starts a new activity to display the game results.
+     * Cuando el juego termina, se inicia la actividad de juego terminado.
      */
     private fun end() {
-        val handler = Handler()
+        val handler = Handler() // maneja las variables de tiempoy errores en un hilo que va a gamefinishedactivity
 
         val startNewActivityRunnable = Runnable {
             val intent = Intent(this, GameFinishedActivity::class.java)
             intent.putExtra("activity", "classic")
-            intent.putExtra("mistakesCount", viewModel.mistakes)
-            intent.putExtra("minutes", viewModel.minutes.value)
-            intent.putExtra("seconds", viewModel.seconds.value)
-            intent.putExtra("mode", mode)
+            intent.putExtra("contadorErrores", viewModel.mistakes)
+            intent.putExtra("Minutos", viewModel.minutes.value)
+            intent.putExtra("Segundos", viewModel.seconds.value)
+            intent.putExtra("Mode", mode)
             startActivity(intent)
             this.finish()
         }
         handler.postDelayed(startNewActivityRunnable, 2000)
     }
 }
-
-
-

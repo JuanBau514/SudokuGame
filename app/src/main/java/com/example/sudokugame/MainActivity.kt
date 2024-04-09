@@ -4,9 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 
-/**
- * Main activity of the Sudoku game.
- */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Configures the click listeners for the buttons in the activity.
+     * Aqui estamos configurando los botones de la actividad principal.
      */
     private fun configureButtons() {
         findViewById<Button>(R.id.easyButton).setOnClickListener {
@@ -31,13 +28,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Starts the TwoPlayersActivity.
-     */
-
-    /**
-     * Starts the ClassicGameActivity with the specified game mode.
+     * Comienza la actividad del juego clasico. Dependiendo del modo, se inicia el juego con un nivel de dificultad diferente.
      *
-     * @param mode The game mode: 1 for easy, 2 for medium, 3 for hard.
+     * @param mode El juego tiene 3 niveles o dificultades: 1 facil, 2 medio, 3 dificil .
      */
     private fun startClassicGameActivity(mode: Int) {
         val intent = Intent(this, ClassicGameActivity::class.java).apply {
