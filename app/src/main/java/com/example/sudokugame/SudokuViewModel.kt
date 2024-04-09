@@ -6,11 +6,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.random.Random
 
-/**
- * ViewModel class for the Sudoku game.
- *
- * @param mode The mode of the game (1, 2, or any other value).
- */
+//ViewModel para la creación del sudoku
 class SudokuViewModel(mode: Int) : ViewModel() {
     var selectedCell = MutableLiveData<Pair<Int, Int>>()
     var boardNumbers = MutableLiveData<List<Pair<Int, Int>?>>()
@@ -33,9 +29,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         startTimer()
     }
 
-    /**
-     * Creates the solution for the Sudoku board.
-     */
+    //se realiza la solución del sudoku
     private fun createSolution() {
         val numbers = (1..9).shuffled(Random).toList()
         solution.addAll(numbers)
@@ -58,11 +52,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         }
     }
 
-    /**
-     * Generates the Sudoku board with a given number of empty cells.
-     *
-     * @param number The number of empty cells in the board.
-     */
+    //Función que genera el tablero de juego
     private fun makeBoard(number: Int) {
         var reps = number
         val array = ArrayList<Pair<Int, Int>?>()
@@ -80,12 +70,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         boardNumbers.postValue(array.toList())
     }
 
-    /**
-     * Updates the selected cell in the Sudoku board.
-     *
-     * @param row The row of the selected cell.
-     * @param column The column of the selected cell.
-     */
+    //actualiza la celda seleccionada en el tablero
     fun updateSelectedCell(row: Int, column: Int) {
         if (finished) return
         if (boardNumbers.value!!.toMutableList()[row * 9 + column] == null ||
@@ -96,11 +81,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         }
     }
 
-    /**
-     * Inputs a number into the selected cell.
-     *
-     * @param number The number to be input.
-     */
+    //Inserta los numeros de la lista actual al tablero de juego
     fun numberInput(number: Int) {
         if (selectedCell.value!!.first == 10 || finished) return
         val currentList = boardNumbers.value?.toMutableList()
@@ -109,12 +90,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         boardNumbers.value = currentList
     }
 
-    /**
-     * Inputs a number into the selected cell and checks if it's correct.
-     *
-     * @param number The number to be input.
-     * @return 1 if the cell is correct, -1 otherwise.
-     */
+    //almacena un numero en la celda seleccionada y valida si es correcto
     fun numberInputWithCheck(number: Int): Int {
         if (selectedCell.value!!.first == 10 || finished) return 0
         val row = selectedCell.value!!.first
@@ -126,9 +102,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         return -1
     }
 
-    /**
-     * Accepts the number input in the selected cell.
-     */
+    //acepta la inserción del numero seleccionado en la celda
     fun acceptNumber() {
         if (selectedCell.value!!.first == 10 || finished) return
         val currentList = boardNumbers.value?.toMutableList()
@@ -141,9 +115,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         boardNumbers.value = currentList
     }
 
-    /**
-     * Removes the number from the selected cell.
-     */
+    //Elimina un numero en una celda
     fun removeNumber() {
         if (selectedCell.value!!.first == 10 || finished) return
         val currentList = boardNumbers.value?.toMutableList()
@@ -155,11 +127,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         boardNumbers.value = currentList
     }
 
-    /**
-     * Finishes the Sudoku game and checks the correctness of each cell.
-     *
-     * @return true if the game is finished, false otherwise.
-     */
+    //termina el juego del sudoku y valida las celdas correctas e incorrectas
     fun finish(): Boolean {
         if (finished) return false
 
@@ -178,13 +146,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         return true
     }
 
-    /**
-     * Checks if the cell at the given row and column is correct.
-     *
-     * @param row The row of the cell.
-     * @param column The column of the cell.
-     * @return true if the cell is correct, false otherwise.
-     */
+    //valida si una celda esta posicionada correctamente en la columna y fila seleccionada
     private fun checkCell(row: Int, column: Int): Boolean {
         val currentList = boardNumbers.value?.toMutableList()
 
@@ -200,9 +162,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
 
     }
 
-    /**
-     * Starts the timer to track the elapsed time of the game.
-     */
+    //comienza el temporizador
     private fun startTimer() {
         timer = Timer()
         timer?.scheduleAtFixedRate(object : TimerTask() {
@@ -212,17 +172,13 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         }, 0L, 1000L)
     }
 
-    /**
-     * Stops the timer.
-     */
+    //se detiene el temporizador
     private fun stopTimer() {
         timer?.cancel()
         timer = null
     }
 
-    /**
-     * Updates the elapsed time and notifies the observers.
-     */
+    //Actualiza el tiempo transcurrido
     private fun updateTime() {
         elapsedTimeInSeconds++
         val minutes = elapsedTimeInSeconds / 60
@@ -231,9 +187,7 @@ class SudokuViewModel(mode: Int) : ViewModel() {
         this.seconds.postValue(seconds)
     }
 
-    /**
-     * Clears the resources when the ViewModel is no longer used.
-     */
+    //libera recursos no usados en la aplicación
     override fun onCleared() {
         super.onCleared()
         stopTimer()

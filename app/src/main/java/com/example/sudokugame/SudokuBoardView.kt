@@ -54,7 +54,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     private val preDefinedCellPaint = Paint().apply { // Paint para las celdas predefinidas en el tablero
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.rgb(225, 20, 65)
+        color = Color.rgb(235, 235, 235)
     }
 
     private val checkedCellPaint = Paint().apply { // Paint para las celdas verificadas en el tablero

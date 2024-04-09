@@ -3,23 +3,19 @@ package com.example.sudokugame
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-/**
- * Factory class for creating instances of [SudokuViewModel].
- *
- * @param parameter An integer parameter used to customize the ViewModel instance.
- */
+///Clase de fábrica para crear instancias de [SudokuViewModel].
+//@param parameter Un parámetro entero utilizado para personalizar la instancia del ViewModel.
+
 class ViewModelFactory(private val parameter: Int) : ViewModelProvider.Factory {
-    /**
-     * Creates a new instance of the requested ViewModel class.
-     *
-     * @param modelClass The class of the ViewModel to create.
-     * @return A new instance of the requested ViewModel class.
-     * @throws IllegalArgumentException if the requested ViewModel class is unknown.
-     */
+    //Crea una nueva instancia de la clase de ViewModel solicitada.
+
+    //modelClass es la clase del viewModel a crear
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass == SudokuViewModel::class.java) {
+            //retorna una nueva instancia de la clase de ViewModel solicitada.
             return SudokuViewModel(parameter) as T
         }
+        //manejo de errores por si la clase de ViewModel solicitada es desconocida
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.canonicalName}")
     }
 }

@@ -35,9 +35,14 @@ class GameFinishedActivity : AppCompatActivity() {
                 text += " y $seconds "
                 text += if (seconds == 1) "Segundos"
                 else "segundos"
-                text += ".\nHaz tenido  $mistakes "
-                text += if (mistakes == 1) "Errores."
+                text += ".\nHas tenido  $mistakes "
+                text += if (mistakes == 1) "Error."
                 else "Errores."
+                if(mistakes==0){
+                    text += "\nHas ganado el juego. Felicidades."
+                }else{
+                    text += "\nHas perdido el juego. ¡Vuelve a intentarlo!"
+                }
             }
             "twoPlayers" -> {
                 text = intent.getStringExtra("type")!!
