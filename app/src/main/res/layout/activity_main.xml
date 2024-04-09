@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_image"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/banner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:foregroundTint="#BF7676"
+        android:text="Bienvenido al \nsudoku!"
+        android:textAlignment="center"
+        android:textSize="38sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/banner"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Escoge la dificultad del juego:"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/easyButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="facil"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/banner"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/mediumButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/easyButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Medio" />
+
+    <Button
+        android:id="@+id/hardButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mediumButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Dificil" />
+
+
+
+</RelativeLayout>
